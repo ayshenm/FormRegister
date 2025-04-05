@@ -1,21 +1,22 @@
-import React from "react";
+import {useState} from "react";
 import { useFormik } from "formik";
 import { registerFormShemas } from "../schemas/RegisterFormSchemas";
 
 const RegisterForm = () => {
 
-  const submit = (values,action) =>{
+  const [successMessage, setSuccessMessage] = useState("");
+
+ 
+  const submit = (values, { resetForm }) => {
     console.log(values);
-    console.log(action);
-    setTimeout(()=>{
-      action.resetForm();
+    setTimeout(() => {
+      resetForm(); // Formu sıfırlamaq üçün resetForm metodunu istifadə edin
+      setSuccessMessage("Success Register🎉"); // Uğurlu qeydiyyat mesajı
+      setTimeout(() => setSuccessMessage(""), 3000); // 3 saniyə sonra mesajı silmək
+    }, 2000);
+  };
 
-    },2000)
-
-
-
-  }
-  const { values, errors, handleChange, handleSubmit } = useFormik({
+  const { values, errors, handleChange, handleSubmit,isSubmitting,touched } = useFormik({
     initialValues: {
       email: "",
       age: "",
@@ -41,7 +42,7 @@ const RegisterForm = () => {
           value={values.email}
           onChange={handleChange}
         />
-        {errors.email && <div className="text-red-500">{errors.email}</div>}
+        {errors.email && touched.email && <div className="text-red-500">{errors.email}</div>}
       </div>
 
       <div className="flex flex-col gap-y-1">
@@ -56,7 +57,7 @@ const RegisterForm = () => {
           value={values.age}
           onChange={handleChange}
         />
-        {errors.age && <div className="text-red-500">{errors.age}</div>}
+        {errors.age && touched.age && <div className="text-red-500">{errors.age}</div>}
       </div>
 
       <div className="flex flex-col gap-y-1">
@@ -71,7 +72,7 @@ const RegisterForm = () => {
           value={values.password}
           onChange={handleChange}
         />
-        {errors.password && <div className="text-red-500">{errors.password}</div>}
+        {errors.password && touched.password && <div className="text-red-500">{errors.password}</div>}
       </div>
 
       <div className="flex flex-col gap-y-1">
@@ -86,7 +87,7 @@ const RegisterForm = () => {
           value={values.confirmPassword}
           onChange={handleChange}
         />
-        {errors.confirmPassword && <div className="text-red-500">{errors.confirmPassword}</div>}
+        {errors.confirmPassword && touched.confirmPassword && <div className="text-red-500">{errors.confirmPassword}</div>}
       </div>
 
       <div className="flex items-start gap-x-2">
@@ -110,13 +111,18 @@ const RegisterForm = () => {
         </label>
         
       </div>
-      {errors.term && <div className="text-red-500">{errors.term}</div>}
+      {errors.term && touched.term && <div className="text-red-500">{errors.term}</div>}
 
       <button
+       disabled={isSubmitting}
         type="submit"
         className="cursor-pointer w-full bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition">
         Register
       </button>
+      {successMessage && (
+        <div className="text-green-600 mt-4 text-center">{successMessage}</div>
+      )}
+
     </form>
   );
 };
